@@ -36,6 +36,14 @@ npx prisma migrate dev --name inicial
 npx prisma db seed
 ```
 
+### Atenção: na sessão remota o Prisma CLI não roda
+
+`binaries.prisma.sh` está fora da lista de hosts permitidos do ambiente remoto, então
+`prisma generate`, `prisma migrate` e `prisma validate` falham lá. O schema e o SQL da
+migration são escritos à mão; `generate` e `migrate deploy` acontecem no build da
+Vercel, onde a rede é aberta. Para aplicar SQL fora de um deploy, usar o editor SQL do
+console da Neon — funciona pelo celular.
+
 O seed cria um profissional de desenvolvimento, três serviços, disponibilidade de
 segunda a sábado e um pacote de quatro sessões.
 
@@ -52,19 +60,18 @@ Depois, abrir o deploy de preview da Vercel no celular e conferir a tela da fase
 
 ## Conferir as restrições de banco
 
-As duas garantias do princípio I e III não aparecem no schema Prisma. Verificar
-diretamente:
+As duas garantias dos princípios I e III não aparecem no schema Prisma. São verificadas
+pelo teste de integração `tests/integration/db-constraints.test.ts` (tarefa T019), que
+consulta `pg_constraint` e `pg_trigger` e tenta um UPDATE no extrato esperando falha.
 
-```bash
-# constraint de sobreposição existe?
-npx prisma db execute --stdin <<< "SELECT conname FROM pg_constraint WHERE conname = 'appointment_no_overlap';"
-
-# trigger de append-only existe?
-npx prisma db execute --stdin <<< "SELECT tgname FROM pg_trigger WHERE tgname = 'session_ledger_no_mutation';"
+```sql
+-- as mesmas consultas, para rodar no editor SQL da Neon pelo celular
+SELECT conname FROM pg_constraint WHERE conname = 'appointment_no_overlap';
+SELECT tgname  FROM pg_trigger    WHERE tgname  = 'session_ledger_no_mutation';
 ```
 
 Ambas devem retornar uma linha. Se não retornarem, a migration inicial está incompleta
-e a feature não está pronta, independentemente do que a UI mostre.
+e a feature não está pronta, independentemente do que a interface mostre.
 
 ## Encerrando a sessão de trabalho
 

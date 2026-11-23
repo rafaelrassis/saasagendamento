@@ -20,13 +20,16 @@ sobrepostos, que precisa de extensão PostgreSQL e é caro de adicionar depois.
 
 **Language/Version**: TypeScript 5.x, Node 22 LTS
 
-**Primary Dependencies**: Next.js 15 (App Router), Prisma 6, Auth.js v5 (`next-auth`)
-com provider de e-mail, Zod para validação de entrada, Tailwind CSS 4,
+**Primary Dependencies**: Next.js 16 (App Router), Prisma 7.10.1, Auth.js v5
+(`next-auth`) com provider de e-mail, Zod para validação de entrada, Tailwind CSS 4,
 `date-fns` + `date-fns-tz` para fuso horário
+
+Prisma fica travado em 7.10.1: a tag `latest` do npm aponta para `8.0.0-rc`, e
+release candidate de ORM não entra no projeto.
 
 **Storage**: PostgreSQL gerenciado na Neon. Extensão `btree_gist` obrigatória.
 
-**Testing**: Vitest para unidade e integração. Sem e2e nesta feature.
+**Testing**: Vitest 5 para unidade e integração. Sem e2e nesta feature.
 
 **Target Platform**: Web, servido pela Vercel. Navegador móvel é o alvo primário.
 
@@ -182,14 +185,36 @@ dependência ao desativar serviço.
 
 Cada fase termina em commit e push na `main`, com `npm run build` e `vitest` verdes.
 
+## Restrição do ambiente: Prisma CLI não roda na sessão remota
+
+O ambiente de desenvolvimento remoto tem rede restrita a registries de pacote e ao
+GitHub. O Prisma CLI baixa seus binários de motor de `binaries.prisma.sh`, que está
+fora dessa lista — então `prisma generate`, `prisma migrate` e `prisma validate` **não
+executam na sessão remota**.
+
+Isso não impede a feature, mas muda onde cada coisa acontece:
+
+- **Schema e SQL de migration são escritos à mão** na sessão remota. Escrever arquivo
+  não exige o motor.
+- **`prisma generate` roda no build da Vercel**, onde a rede é aberta. Entra como
+  etapa de build no `package.json`.
+- **A migration é aplicada por `prisma migrate deploy` no deploy**, ou pelo editor SQL
+  do console da Neon quando precisar ser aplicada fora de um deploy.
+- **A conferência das restrições de banco** (constraint de sobreposição e trigger de
+  append-only) é feita por teste de integração rodando contra a Neon, não por comando
+  local do Prisma.
+
+A consequência prática é que a tarefa T010 passa a significar "escrever a migration",
+e sua aplicação é verificada no primeiro deploy, não localmente.
+
 ## Verificação
 
 Não há servidor local de longa duração. A verificação de cada fase é:
 
 1. `npm run build` sem erro
 2. `vitest run` verde
-3. `npx prisma migrate diff` confirmando que o schema aplicado corresponde ao arquivo
-4. deploy de preview na Vercel aberto no celular para conferência visual
+3. deploy na Vercel verde, com `prisma migrate deploy` passando no build
+4. deploy de preview aberto no celular para conferência visual
 
 Teste de isolamento multi-tenant é obrigatório na Fase 1 e reexecutado ao fim de cada
 fase seguinte: cada Server Action é chamada com sessão de um profissional tentando
