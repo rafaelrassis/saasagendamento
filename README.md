@@ -35,15 +35,19 @@ plataforma nunca custodiar o dinheiro da venda.
 
 Uma feature por vez. Commit e push na `main` ao fim de cada etapa.
 
+As features 002 a 005 têm `spec.md` e **nenhum plano ainda**, de propósito: o plano
+técnico de cada uma depende do que a implementação da anterior revelar. Planejar as
+cinco agora produziria decisões que seriam refeitas.
+
 ## Roadmap
 
 | Feature | Escopo | Estado |
 |---|---|---|
-| `001-fundacao-painel` | Schema, auth magic link, serviços, disponibilidade, bloqueios, pacotes | spec e plano prontos |
-| `002-pagamento-pacotes` | `PaymentProvider`, Asaas, Pix, webhook, ledger de sessões | não iniciada |
-| `003-bot-whatsapp` | Cloud API, Flows, comprar/agendar/saldo/cancelar | não iniciada |
-| `004-lembretes-expiracao` | Cron, lembretes 24h/2h, expiração | não iniciada |
-| `005-dashboard` | Receita, sessões vendidas vs usadas, clientes ativos | não iniciada |
+| `001-fundacao-painel` | Schema, auth magic link, serviços, disponibilidade, bloqueios, pacotes | **spec, plano e 65 tarefas prontos** — pronta para implementar |
+| `002-pagamento-pacotes` | `PaymentProvider`, Asaas, Pix, webhook, ledger de sessões | spec pronta, sem plano |
+| `003-bot-whatsapp` | Cloud API, Flows, comprar/agendar/saldo/cancelar | spec pronta, sem plano |
+| `004-lembretes-expiracao` | Cron, lembretes 24h/2h, expiração | spec pronta, sem plano |
+| `005-dashboard` | Receita, sessões vendidas vs usadas, clientes ativos | spec pronta, sem plano |
 
 ## Stack
 
