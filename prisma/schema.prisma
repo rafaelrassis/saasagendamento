@@ -1,0 +1,17 @@
+// O schema completo das 13 entidades é a tarefa T009 (Phase 2).
+// Ver specs/001-fundacao-painel/data-model.md.
+//
+// As restrições que o Prisma não expressa — a constraint de sobreposição em
+// Appointment e o trigger de append-only em SessionLedger — entram como SQL cru
+// na migration inicial (T011 e T012) e são obrigatórias: sem elas os princípios
+// I e III da constituição não são cumpridos.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
