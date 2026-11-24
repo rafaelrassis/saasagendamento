@@ -109,7 +109,23 @@ export function getDoc(slug: string): Doc | undefined {
 }
 
 export function lerConteudo(doc: Doc): string {
-  const bruto = readFileSync(join(process.cwd(), doc.arquivo), "utf8");
+  const bruto = readFileSync(join(/*turbopackIgnore: true*/ process.cwd(), doc.arquivo), "utf8");
   // Remove o front-matter YAML, que não deve ser renderizado como corpo.
   return bruto.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, "");
+}
+
+// Navegação sequencial no pé da página: a ordem é a do array acima.
+export function vizinhos(slug: string): { anterior?: Doc; proximo?: Doc } {
+  const i = docs.findIndex((d) => d.slug === slug);
+  if (i < 0) return {};
+  return { anterior: docs[i - 1], proximo: docs[i + 1] };
+}
+
+// Índice interno ("nesta página"), só dos títulos de segundo nível.
+export function secoes(conteudo: string): string[] {
+  return conteudo
+    .replace(/```[\s\S]*?```/g, "")
+    .split(/\r?\n/)
+    .filter((l) => /^##\s+\S/.test(l))
+    .map((l) => l.replace(/^##\s+/, "").replace(/\s*#*\s*$/, "").trim());
 }
