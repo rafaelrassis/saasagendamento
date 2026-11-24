@@ -15,8 +15,9 @@ alteração de schema.
 
 O desenvolvimento segue **Spec-Driven Development** com [Spec Kit](https://github.com/github/spec-kit).
 
-A documentação também é publicada no próprio site, em `/docs`, renderizada em
-tempo de build a partir destes mesmos arquivos — sem cópia.
+A documentação também é publicada no próprio site, em `/docs`: uma página única
+com índice lateral, renderizada em tempo de build a partir destes mesmos
+arquivos — sem cópia.
 
 | Caminho | O que é |
 |---|---|

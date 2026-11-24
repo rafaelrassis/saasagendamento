@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { docs, grupos } from "@/lib/docs";
 
 export default function Home() {
   return (
@@ -26,28 +25,6 @@ export default function Home() {
           features
         </span>
       </Link>
-
-      {grupos.map((grupo) => (
-        <section key={grupo} className="mt-8 space-y-2">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-neutral-500">
-            {grupo}
-          </h2>
-          <ul className="divide-y divide-neutral-200 rounded-xl border border-neutral-200">
-            {docs
-              .filter((d) => d.grupo === grupo)
-              .map((doc) => (
-                <li key={doc.slug}>
-                  <Link
-                    href={`/docs/${doc.slug}`}
-                    className="block px-4 py-3 text-sm transition-colors hover:bg-neutral-50"
-                  >
-                    {doc.titulo}
-                  </Link>
-                </li>
-              ))}
-          </ul>
-        </section>
-      ))}
 
       <footer className="mt-10 border-t border-neutral-200 pt-6 text-sm text-neutral-500">
         O painel do profissional está sendo construído. Nada aqui ainda recebe
